@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 class InsufficientInventory extends Exception {
     public InsufficientInventory(int currentInventory, int requestedInventory) {
@@ -9,22 +11,11 @@ class InsufficientInventory extends Exception {
 }
 
 public class Inventory {
-    private List<Product> products = new ArrayList<>();
-
-    private int getProductIndex(String productId) {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getProductId().equals(productId)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
+    private Set<Product> products = new HashSet<>();
 
     void addProduct(String productId, double price, int quantity) {
-        int index = getProductIndex(productId);
-        if (index >= 0) {
-            Product product = products.get(index);
+        Product product = getProduct(productId);
+        if (product != null) {
             product.addStock(quantity);
             if (product.getPrice() != price) {
                 product.setPrice(price);
@@ -36,16 +27,15 @@ public class Inventory {
     }
 
     void removeProduct(String productId, int quantity) throws InsufficientInventory {
-        int index = getProductIndex(productId);
-
-        if (index == -1) {
+        Product product = getProduct(productId);
+        if (product == null) {
             throw new InsufficientInventory(0, quantity);
-        } else if (products.get(index).getQuantity() < quantity) {
-            throw new InsufficientInventory(products.get(index).getQuantity(), quantity);
-        } else if (products.get(index).getQuantity() == quantity) {
-            products.remove(index);
+        } else if (product.getQuantity() < quantity) {
+            throw new InsufficientInventory(product.getQuantity(), quantity);
+        } else if (product.getQuantity() == quantity) {
+            products.remove(product);
         } else {
-            products.get(index).removeStock(quantity);
+            product.removeStock(quantity);
         }
     }
 
@@ -64,12 +54,13 @@ public class Inventory {
     }
 
     Product getProduct(String productId) {
-        int index = getProductIndex(productId);
-        if (index >= 0) {
-            return products.get(index);
-        } else {
-            return null;
+        for (Product product: products) {
+            if (product.getProductId().equals(productId)) {
+                return product;
+            }
         }
+
+        return null;
     }
 
     String getAllProductNames() {
