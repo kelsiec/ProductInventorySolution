@@ -7,7 +7,7 @@ public class InventoryTests {
         Inventory inventory = new Inventory();
         inventory.addProduct("apple", .6, 2);
 
-        Assert.assertEquals(2, inventory.getProduct("apple").getQuantity());
+        Assert.assertEquals(2, inventory.getProducts().get("apple").getQuantity());
     }
 
     @Test
@@ -16,7 +16,7 @@ public class InventoryTests {
         inventory.addProduct("apple", .6, 1);
         inventory.addProduct("apple", .6, 2);
 
-        Assert.assertEquals(3, inventory.getProduct("apple").getQuantity());
+        Assert.assertEquals(3, inventory.getProducts().get("apple").getQuantity());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class InventoryTests {
         inventory.addProduct("apple", .6, 1);
         inventory.addProduct("apple", .7, 2);
 
-        Assert.assertEquals(.7, inventory.getProduct("apple").getPrice(), .0001);
+        Assert.assertEquals(.7, inventory.getProducts().get("apple").getPrice(), .0001);
     }
 
     @Test(expected = InsufficientInventory.class)
@@ -41,7 +41,7 @@ public class InventoryTests {
         inventory.addProduct("apple", .6, 10);
         inventory.removeProduct("apple", 8);
 
-        Assert.assertEquals(2, inventory.getProduct("apple").getQuantity());
+        Assert.assertEquals(2, inventory.getProducts().get("apple").getQuantity());
     }
 
     @Test(expected = InsufficientInventory.class)
